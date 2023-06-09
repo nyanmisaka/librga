@@ -39,8 +39,6 @@
 #include "im2d.hpp"
 #include "utils.h"
 
-#define LOCAL_FILE_PATH "/data"
-
 int main() {
     int ret = 0;
     int src_width, src_height, src_format;
@@ -71,8 +69,8 @@ int main() {
     dst_buf = (char *)malloc(dst_buf_size);
 
     /* fill image data */
-    if (0 != read_image_from_file(src_buf, LOCAL_FILE_PATH, src_width, src_height, src_format, 0)) {
-        printf("src image read err\n");
+    if (0 != get_buf_from_file(src_buf, src_format, src_width, src_height, 0)) {
+        printf("src image write err\n");
         draw_rgba(src_buf, src_width, src_height);
     }
     memset(dst_buf, 0x80, dst_buf_size);
@@ -136,7 +134,7 @@ int main() {
         }
     }
 
-    write_image_to_file(dst_buf, LOCAL_FILE_PATH, dst_width, dst_height, dst_format, 0);
+    output_buf_data_to_file(dst_buf, dst_format, dst_width, dst_height, 0);
 
 release_buffer:
     if (src_handle)

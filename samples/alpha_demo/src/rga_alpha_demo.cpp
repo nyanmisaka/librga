@@ -33,10 +33,6 @@
 #include "RgaUtils.h"
 #include "im2d.hpp"
 
-#include "utils.h"
-
-#define LOCAL_FILE_PATH "/data"
-
 int main() {
     int ret = 0;
     int fg_width, fg_height, fg_format;
@@ -65,12 +61,12 @@ int main() {
     bg_buf = (char *)malloc(bg_buf_size);
 
     /* fill image data */
-    if (0 != read_image_from_file(fg_buf, LOCAL_FILE_PATH, fg_width, fg_height, fg_format, 0)) {
-        printf("foreground image read err\n");
+    if (0 != get_buf_from_file(fg_buf, fg_format, fg_width, fg_height, 0)) {
+        printf("foreground image write err\n");
         memset(fg_buf, 0xaa, fg_buf_size);
     }
-    if (0 != read_image_from_file(fg_buf, LOCAL_FILE_PATH, bg_width, bg_height, bg_format, 1)) {
-        printf("background image read err\n");
+    if (0 != get_buf_from_file(bg_buf, bg_format, bg_width, bg_height, 1)) {
+        printf("background image write err\n");
         memset(bg_buf, 0x66, bg_buf_size);
     }
 
@@ -107,7 +103,7 @@ int main() {
         goto release_buffer;
     }
 
-    write_image_to_file(bg_buf, LOCAL_FILE_PATH, bg_width, bg_height, bg_format, 0);
+    output_buf_data_to_file(bg_buf, bg_format, bg_width, bg_height, 0);
 
 release_buffer:
     if (fg_handle)

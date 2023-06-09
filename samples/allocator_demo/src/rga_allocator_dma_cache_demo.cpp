@@ -36,8 +36,6 @@
 #include "utils.h"
 #include "dma_alloc.h"
 
-#define LOCAL_FILE_PATH "/data"
-
 int main(void) {
     int ret = 0;
     int64_t ts;
@@ -77,7 +75,7 @@ int main(void) {
         return -1;
     }
 
-    ret = read_image_from_file(src_buf, LOCAL_FILE_PATH, src_width, src_height, src_format, 0);
+    ret = get_buf_from_file(src_buf, src_format, src_width, src_height, 0);
     if (ret < 0) {
         printf ("open file %s so memset!\n", "fault");
         draw_rgba((char *)src_buf, src_width, src_height);
@@ -121,14 +119,14 @@ int main(void) {
     }
 
     printf("Before flushing the cache [0x%x, 0x%x, 0x%x, 0x%x]\n", dst_buf[0], dst_buf[1], dst_buf[2], dst_buf[3]);
-    write_image_to_file(dst_buf, LOCAL_FILE_PATH, dst_width, dst_height, dst_format, 0);
+    output_buf_data_to_file(dst_buf, dst_format, dst_width, dst_height, 0);
 
     /* invalid CPU cache */
     dma_sync_device_to_cpu(src_dma_fd);
     dma_sync_device_to_cpu(dst_dma_fd);
 
     printf("After flushing the cache [0x%x, 0x%x, 0x%x, 0x%x]\n", dst_buf[0], dst_buf[1], dst_buf[2], dst_buf[3]);
-    write_image_to_file(dst_buf, LOCAL_FILE_PATH, dst_width, dst_height, dst_format, 1);
+    output_buf_data_to_file(dst_buf, dst_format, dst_width, dst_height, 1);
 
 release_buffer:
     if (src_handle > 0)
